@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+libraries=["LiquidCrystal I2C",{"package"\:"arduino","platform"\:"avr","library"\:"Wire"},"Keypad"]

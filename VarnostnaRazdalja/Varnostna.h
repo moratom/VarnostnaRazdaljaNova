@@ -1,0 +1,22 @@
+/*
+ * Varnostna.h
+ *
+ *  Created on: Apr 11, 2019
+ *      Author: root
+ */
+
+#ifndef VARNOSTNA_H_
+#define VARNOSTNA_H_
+
+#define pinEcho 2
+#define pinTrig 3
+#define pinTemp A1
+#define velikostGlavniMeni 7
+#define velikostNastavitveSenzorja 6
+
+float temperatura(void);
+
+
+
+
+#endif /* VARNOSTNA_H_ */

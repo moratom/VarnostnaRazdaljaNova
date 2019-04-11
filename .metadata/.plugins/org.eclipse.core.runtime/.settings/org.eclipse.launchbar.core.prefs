@@ -1,0 +1,11 @@
+LaunchTargetManager/configs/VarnostnaRazdalja=org.eclipse.cdt.arduino.core.connectionType\:Arduino Mega
+LaunchTargetManager/org.eclipse.cdt.arduino.core.connectionType,Arduino\ Mega/name=Arduino Mega
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
+configDescList=org.eclipse.cdt.arduino.core.descriptorType\:VarnostnaRazdalja,org.eclipse.launchbar.core.descriptorType.default\:VarnostnaRazdalja.elf
+eclipse.preferences.version=1
+org.eclipse.cdt.arduino.core.descriptorType\:VarnostnaRazdalja/activeLaunchMode=run
+org.eclipse.cdt.arduino.core.descriptorType\:VarnostnaRazdalja/activeLaunchTarget=org.eclipse.cdt.arduino.core.connectionType\:Arduino Mega
+org.eclipse.launchbar.core.descriptorType.default\:VarnostnaRazdalja.elf/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:VarnostnaRazdalja.elf/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
