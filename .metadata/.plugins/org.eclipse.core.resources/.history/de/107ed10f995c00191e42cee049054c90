@@ -1,0 +1,18 @@
+#include "Varnostna.h"
+
+void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni){
+  if(velikostMenija - zacetekPrikaza >= 4){
+    for(int i = zacetekPrikaza, k = 0; i <= zacetekPrikaza+3 && i < velikostMenija; i++, k++){
+      lcd.setCursor(0,k);
+      lcd.print(meni[i]);
+      lcd.setCursor(19,0);
+    }
+  }
+  else{
+    for(int i = velikostMenija - 4, k = 0; i < velikostMenija; i++, k++){
+      lcd.setCursor(0,k);
+      lcd.print(meni[i]);
+      lcd.setCursor(19,zacetekPrikaza - (velikostMenija - 4));
+    }
+  }
+}

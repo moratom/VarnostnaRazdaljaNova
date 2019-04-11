@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;VarnostnaRazdalja/Funkcije.cpp&apos; to &apos;FunkcijeSenzorji.cpp&apos;" description="Rename resource &apos;Funkcije.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Funkcije.cpp" name="FunkcijeSenzorji.cpp" stamp="1555014377947" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;VarnostnaRazdalja/FunkcijePrikaz&apos; to &apos;FunkcijePrikaz.cpp&apos;" description="Rename resource &apos;FunkcijePrikaz&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="FunkcijePrikaz" name="FunkcijePrikaz.cpp" stamp="1555014465984" updateReferences="true"/>
+</session>

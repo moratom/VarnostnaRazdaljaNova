@@ -455,3 +455,97 @@ Building VarnostnaRazdalja
 make: Nothing to be done for 'all'.
 Program store usage: 9523 of maximum 253952 bytes
 Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../FunkcijePrikaz.cpp" -o "project/FunkcijePrikaz.cpp.o"
+../../FunkcijePrikaz.cpp: In function 'void prikaziMeni(int, int, char**)':
+../../FunkcijePrikaz.cpp:6:7: error: 'lcd' was not declared in this scope
+       lcd.setCursor(0,k);
+       ^
+../../FunkcijePrikaz.cpp:13:7: error: 'lcd' was not declared in this scope
+       lcd.setCursor(0,k);
+       ^
+make: *** [Makefile:79: project/FunkcijePrikaz.cpp.o] Error 1
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../FunkcijePrikaz.cpp" -o "project/FunkcijePrikaz.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../FunkcijeSenzorji.cpp" -o "project/FunkcijeSenzorji.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../VarnostnaRazdalja.cpp" -o "project/VarnostnaRazdalja.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-gcc" -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560  -o "./VarnostnaRazdalja.elf" project/FunkcijePrikaz.cpp.o project/FunkcijeSenzorji.cpp.o project/VarnostnaRazdalja.cpp.o  libraries/LiquidCrystal_I2C/1.1.2/LiquidCrystal_I2C.cpp.o libraries/Wire/src/Wire.cpp.o libraries/Wire/src/utility/twi.c.o libraries/Keypad/3.1.1/src/Key.cpp.o libraries/Keypad/3.1.1/src/Keypad.cpp.o  "./core.a" "-L." -lm
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -R .eeprom  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.hex"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.eep"
+Program store usage: 9523 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+make: Nothing to be done for 'all'.
+Program store usage: 9523 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+make: Nothing to be done for 'all'.
+Program store usage: 9523 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+make: Nothing to be done for 'all'.
+Program store usage: 9523 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../VarnostnaRazdalja.cpp" -o "project/VarnostnaRazdalja.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-gcc" -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560  -o "./VarnostnaRazdalja.elf" project/FunkcijePrikaz.cpp.o project/FunkcijeSenzorji.cpp.o project/VarnostnaRazdalja.cpp.o  libraries/LiquidCrystal_I2C/1.1.2/LiquidCrystal_I2C.cpp.o libraries/Wire/src/Wire.cpp.o libraries/Wire/src/utility/twi.c.o libraries/Keypad/3.1.1/src/Key.cpp.o libraries/Keypad/3.1.1/src/Keypad.cpp.o  "./core.a" "-L." -lm
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -R .eeprom  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.hex"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.eep"
+Program store usage: 9495 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../VarnostnaRazdalja.cpp" -o "project/VarnostnaRazdalja.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-gcc" -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560  -o "./VarnostnaRazdalja.elf" project/FunkcijePrikaz.cpp.o project/FunkcijeSenzorji.cpp.o project/VarnostnaRazdalja.cpp.o  libraries/LiquidCrystal_I2C/1.1.2/LiquidCrystal_I2C.cpp.o libraries/Wire/src/Wire.cpp.o libraries/Wire/src/utility/twi.c.o libraries/Keypad/3.1.1/src/Key.cpp.o libraries/Keypad/3.1.1/src/Keypad.cpp.o  "./core.a" "-L." -lm
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -R .eeprom  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.hex"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.eep"
+Program store usage: 9543 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+make: Nothing to be done for 'all'.
+Program store usage: 9543 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+make: Nothing to be done for 'all'.
+Program store usage: 9543 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../VarnostnaRazdalja.cpp" -o "project/VarnostnaRazdalja.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-gcc" -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560  -o "./VarnostnaRazdalja.elf" project/FunkcijePrikaz.cpp.o project/FunkcijeSenzorji.cpp.o project/VarnostnaRazdalja.cpp.o  libraries/LiquidCrystal_I2C/1.1.2/LiquidCrystal_I2C.cpp.o libraries/Wire/src/Wire.cpp.o libraries/Wire/src/utility/twi.c.o libraries/Keypad/3.1.1/src/Key.cpp.o libraries/Keypad/3.1.1/src/Keypad.cpp.o  "./core.a" "-L." -lm
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -R .eeprom  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.hex"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.eep"
+Program store usage: 9551 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../VarnostnaRazdalja.cpp" -o "project/VarnostnaRazdalja.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-gcc" -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560  -o "./VarnostnaRazdalja.elf" project/FunkcijePrikaz.cpp.o project/FunkcijeSenzorji.cpp.o project/VarnostnaRazdalja.cpp.o  libraries/LiquidCrystal_I2C/1.1.2/LiquidCrystal_I2C.cpp.o libraries/Wire/src/Wire.cpp.o libraries/Wire/src/utility/twi.c.o libraries/Keypad/3.1.1/src/Key.cpp.o libraries/Keypad/3.1.1/src/Keypad.cpp.o  "./core.a" "-L." -lm
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -R .eeprom  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.hex"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.eep"
+Program store usage: 9551 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../VarnostnaRazdalja.cpp" -o "project/VarnostnaRazdalja.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-gcc" -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560  -o "./VarnostnaRazdalja.elf" project/FunkcijePrikaz.cpp.o project/FunkcijeSenzorji.cpp.o project/VarnostnaRazdalja.cpp.o  libraries/LiquidCrystal_I2C/1.1.2/LiquidCrystal_I2C.cpp.o libraries/Wire/src/Wire.cpp.o libraries/Wire/src/utility/twi.c.o libraries/Keypad/3.1.1/src/Key.cpp.o libraries/Keypad/3.1.1/src/Keypad.cpp.o  "./core.a" "-L." -lm
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -R .eeprom  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.hex"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.eep"
+Program store usage: 9543 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes
+
+Building VarnostnaRazdalja
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "../../VarnostnaRazdalja.cpp" -o "project/VarnostnaRazdalja.cpp.o"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-gcc" -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560  -o "./VarnostnaRazdalja.elf" project/FunkcijePrikaz.cpp.o project/FunkcijeSenzorji.cpp.o project/VarnostnaRazdalja.cpp.o  libraries/LiquidCrystal_I2C/1.1.2/LiquidCrystal_I2C.cpp.o libraries/Wire/src/Wire.cpp.o libraries/Wire/src/utility/twi.c.o libraries/Keypad/3.1.1/src/Key.cpp.o libraries/Keypad/3.1.1/src/Keypad.cpp.o  "./core.a" "-L." -lm
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -R .eeprom  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.hex"
+"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "./VarnostnaRazdalja.elf" "./VarnostnaRazdalja.eep"
+Program store usage: 9505 of maximum 253952 bytes
+Initial RAM usage: 882 of maximum 8192 bytes

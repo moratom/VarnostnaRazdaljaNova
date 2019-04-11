@@ -58,19 +58,45 @@ byte colPins[COLS] = {A11, A10, A9, A8}; //connect to the column pinouts of the 
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 
 
+/*
+float temperatura(){
+  int tempReading = analogRead(pinTemp);
+  double tempK = log(10000.0 * ((1024.0 / tempReading - 1)));
+  tempK = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * tempK * tempK )) * tempK );       //  Temp Kelvin
+  float tempC = tempK - 273.15;
+  return tempC;
+}
+*/
+
+float razdalja(){
+  int duration;
+  float distance;
+  digitalWrite(pinTrig, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pinTrig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pinTrig, LOW);
+  duration = pulseIn(pinEcho, HIGH,20000); //zadnja paramater je maksimalni čas, v us ki naj ga funkcija počaka.
+  Serial.println(duration);
+  distance = float(duration) * 0.034 / 2;
+  return distance;
+
+}
+
+
 void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni){
-  if(zacetekPrikaza <= 3){
-    for(int i = 0, k = 0; i <= 3 && i < velikostMenija; i++, k++){
+  if(velikostMenija - zacetekPrikaza >= 4){
+    for(int i = zacetekPrikaza, k = 0; i <= zacetekPrikaza+3 && i < velikostMenija; i++, k++){
       lcd.setCursor(0,k);
       lcd.print(meni[i]);
-      lcd.setCursor(19,zacetekPrikaza);
+      lcd.setCursor(19,0);
     }
   }
   else{
-    for(int i = zacetekPrikaza - 3, k = 0; i < velikostMenija && i <= zacetekPrikaza; i++, k++){
+    for(int i = velikostMenija - 4, k = 0; i < velikostMenija; i++, k++){
       lcd.setCursor(0,k);
       lcd.print(meni[i]);
-      lcd.setCursor(19,3);
+      lcd.setCursor(19,zacetekPrikaza - (velikostMenija - 4));
     }
   }
 }

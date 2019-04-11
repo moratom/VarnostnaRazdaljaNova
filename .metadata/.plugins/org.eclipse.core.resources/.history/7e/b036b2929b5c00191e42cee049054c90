@@ -67,7 +67,7 @@ void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni){
     }
   }
   else{
-    for(int i = zacetekPrikaza - 3, k = 0; i < velikostMenija && i <= zacetekPrikaza; i++, k++){
+    for(int i = zacetekPrikaza - 3, k = 0; i < velikostMenija; i++, k++){
       lcd.setCursor(0,k);
       lcd.print(meni[i]);
       lcd.setCursor(19,3);
@@ -88,6 +88,7 @@ int main() {
   pinMode(pinEcho, INPUT);
   lcd.init();
   lcd.backlight();
+  lcd.setCursor(12,12);
   lcd.cursor();
   prikaziMeni(0,velikostGM, glavniMeni);
   int *velikostPointer = &velikostGM;
