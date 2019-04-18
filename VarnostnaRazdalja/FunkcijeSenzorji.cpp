@@ -2,7 +2,7 @@
  * Funkcije.cpp
  *
  *  Created on: Apr 11, 2019
- *      Author: root
+ *      Author: matevz
  */
 #include"Varnostna.h"
 #include <Arduino.h>

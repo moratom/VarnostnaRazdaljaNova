@@ -10,7 +10,6 @@ mymkdir = mkdir -p $1
 endif
 
 PROJECT_OBJS = \
-	project/FunkcijePrikaz.cpp.o \
 	project/FunkcijeSenzorji.cpp.o \
 	project/VarnostnaRazdalja.cpp.o \
 
@@ -73,14 +72,6 @@ clean:
 
 size:
 	"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-size" -A "./VarnostnaRazdalja.elf"
-
-project/FunkcijePrikaz.cpp.o: ../../FunkcijePrikaz.cpp project/FunkcijePrikaz.cpp.d
-	@$(call mymkdir,$(dir $@))
-	"/root/.arduinocdt/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR   -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/mega" -I"/root/.arduinocdt/libraries/LiquidCrystal_I2C/1.1.2" -I"/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src" -I"/root/.arduinocdt/libraries/Keypad/3.1.1/src" "$<" -o "$@"
-
-project/FunkcijePrikaz.cpp.d: ;
-
--include project/FunkcijePrikaz.cpp.d 
 
 project/FunkcijeSenzorji.cpp.o: ../../FunkcijeSenzorji.cpp project/FunkcijeSenzorji.cpp.d
 	@$(call mymkdir,$(dir $@))
