@@ -7,20 +7,45 @@
 #include "/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/standard/pins_arduino.h"
 #include "Varnostna.h"
 
-#define velikostGlavniMeni 3
+#define velikostGlavniMeni 4
 #define velikostIzborPrikazaMeni 5
-#define velikostNastavitve 3
+#define velikostNastavitve 5
+#define velikostUporabniki 6
+
+
+////////////////////////////////////LCD IN KEYPAD INCIALIZACIJA CLASSOV/////////////////////////////
+LiquidCrystal_I2C lcd(0x3F, 20, 4);
+
+const byte ROWS = 4; //four rows
+const byte COLS = 4; //four columns
+//define the cymbols on the buttons of the keypads
+char hexaKeys[ROWS][COLS] = {
+ { '1', '2', '3', 'A' },
+ { '4', '5', '6', 'B' },
+ {'7', '8', '9', 'C' },
+ { '*', '0', '#', 'D' },
+ };
+byte rowPins[ROWS] = { A15, A14, A13, A12 }; // @suppress("Symbol is not resolved")
+byte colPins[COLS] = { A11, A10, A9, A8 }; // @suppress("Symbol is not resolved")
+Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 int velikostGM = velikostGlavniMeni;
 int velikostIP = velikostIzborPrikazaMeni;
 int velikostNS = velikostNastavitve;
-int msVarnostneRazdalje = 1500;
+int velikostUP = velikostUporabniki;
 
-LiquidCrystal_I2C lcd(0x3F, 20, 4);
+///////////////////////////////////////////////////////////////////////////////////////////////
+podatki privzeto = {1500, 500,100, 3 , prikazOsnovni};
+podatki uporabnik[6];
+podatki *pointerPodatki = &privzeto;
+byte stUporabnika;
+
+
 
 
 //AVTO//
-/////////////////////////////////////////////////////7
+///////////////////////////////////////////////////////////////////////////
 byte kolo[8] = { 0x0E, 0x0E, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, };
 
 byte prednjiDel[8] = { 0x0, 0x0, 0x0, 0x0, 0x1, 0x1F, 0x1F, 0x1F, };
@@ -46,6 +71,7 @@ char *glavniMeni[] = {
 "Prikaz             ",
 "Izbor prikaza      ",
 "Nastavitve         ",
+"Izberi uporabnika  ",
  };
 
 char *izborPrikaza[] = {
@@ -53,31 +79,27 @@ char *izborPrikaza[] = {
 "Hitrost            ",
 "Razdalje           ",
 "Graficni prikaz 1  ",
-"Graficni prikaz 2  ", };
+"Graficni prikaz 2  ",
+};
 
 char *nastavitve[] = {
 "Idealna varnost    ",
 "Vpliv temeperature ",
-"Poonastavi privzet ",
+"Refresh rate       ",
+"Mejna temperatura  ",
+"Ponastavi privzeto ",
 };
 
+char *uporabniki[] = {
+"Uporabnik 1        ",
+"Uporabnik 2        ",
+"Uporabnik 3        ",
+"Uporabnik 4        ",
+"Uporabnik 5        ",
+"Uporabnik 6        ",
+};
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const byte ROWS = 4; //four rows
-const byte COLS = 4; //four columns
-//define the cymbols on the buttons of the keypads
-char hexaKeys[ROWS][COLS] = {
- { '1', '2', '3', 'A' },
- { '4', '5', '6', 'B' },
- {'7', '8', '9', 'C' },
- { '*', '0', '#', 'D' },
- };
-byte rowPins[ROWS] = { A15, A14, A13, A12 }; //connect to the row pinouts of the keypad // @suppress("Symbol is not resolved")
-byte colPins[COLS] = { A11, A10, A9, A8 }; //connect to the column pinouts of the keypad // @suppress("Symbol is not resolved")
 
-//initialize an instance of class NewKeypad
-Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS,
-		COLS);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
 	init();
@@ -89,6 +111,7 @@ int main() {
 	lcd.backlight();
 	lcd.cursor();
 	/////////////////////////////////////////////////
+
 	lcd.createChar(1, kolo);
 	lcd.createChar(2, prednjiDel);
 	lcd.createChar(3, srednjiDel);
@@ -96,9 +119,18 @@ int main() {
 	lcd.createChar(5, crtaDesna);
 	lcd.createChar(6, polniBlok);
 
-	//////////////////////////////////////////////////
+	///EEPROM BRANJE///////////////////////////////////////////////////////////////////////////////////////////////
+	for(int i = 0; i < 6; i++){
+		beriIzEEPROM(i*(sizeof(podatki)), uporabnik + i);
+		//*(uporabnik + i) = privzeto; //ZA POENOSTAVIT VSE UPORABNIKE NA PRIVZETE VREDNOSTI
+		//zapisiNaEEPROM(i * sizeof(podatki), *(uporabnik + i));
+	}
+	stUporabnika = EEPROM.read(6*sizeof(podatki));
+	pointerPodatki = uporabnik + stUporabnika;
+
+
+	//////////////////////////////
 	prikaziMeni(0, velikostGM, glavniMeni);
-	void (*prikazPointer)() = prikazOsnovni;
 	int *velikostPointer = &velikostGM;
 	char **meniPointer = glavniMeni;
 	int zacetek;
@@ -109,7 +141,7 @@ int main() {
 		if (meniPointer == glavniMeni) {
 			switch (zacetek) {
 			case 0:
-				prikazPointer();
+				(*pointerPodatki).prikazPointer();
 				break;
 			case 1:
 				meniPointer = izborPrikaza;
@@ -119,8 +151,11 @@ int main() {
 				meniPointer = nastavitve;
 				velikostPointer = &velikostNS;
 				break;
-
+			case 3:
+				meniPointer = uporabniki;
+				velikostPointer = &velikostUP;
 			}
+
 		} else if (meniPointer == izborPrikaza) {
 			switch (zacetek) {
 			case -1:
@@ -128,23 +163,28 @@ int main() {
 				velikostPointer = &velikostGM;
 				break;
 			case 0:
-				prikazPointer = prikazOsnovni;
+				(*pointerPodatki).prikazPointer= prikazOsnovni;
+				zapisiNaEEPROM((unsigned int)stUporabnika * sizeof(podatki), *pointerPodatki);
 				prikazSpremenjen("Osnovni prikaz");
 				break;
 			case 1:
-				prikazPointer = prikazHitrost;
+				(*pointerPodatki).prikazPointer = prikazHitrost;
+				zapisiNaEEPROM(stUporabnika * sizeof(podatki), *pointerPodatki);
 				prikazSpremenjen("Prikaz hitrost");
 				break;
 			case 2:
-				prikazPointer = prikazRazdalje;
+				(*pointerPodatki).prikazPointer = prikazRazdalje;
+				zapisiNaEEPROM(stUporabnika * sizeof(podatki), *pointerPodatki);
 				prikazSpremenjen("Prikaz razdalj");
 				break;
 			case 3:
-				prikazPointer = prikazGraficni1;
+				(*pointerPodatki).prikazPointer = prikazGraficni1;
+				zapisiNaEEPROM(stUporabnika * sizeof(podatki), *pointerPodatki);
 				prikazSpremenjen("Grafika 1 ");
 				break;
 			case 4:
-				prikazPointer = prikazRazdalje;
+				(*pointerPodatki).prikazPointer = prikazRazdalje;
+				zapisiNaEEPROM(stUporabnika * sizeof(podatki), *pointerPodatki);
 				prikazSpremenjen(" ");
 				break;
 
@@ -156,13 +196,41 @@ int main() {
 				velikostPointer = &velikostGM;
 				break;
 			case 0:
-				spremeniIdealnoVarnostno();
+				spremeniPodatek("varnostna",&(*pointerPodatki).msVarnostneRazdalje, 5000 , 500);
+				break;
+			case 1:
+				spremeniPodatek("koef temp",&(*pointerPodatki).koefTemp, 300 , 100);
+				break;
+			case 2:
+				spremeniPodatek("refr rate", &(*pointerPodatki).refreshRate, 2000, 100);
+				break;
+			case 3:
+				spremeniPodatek("mejna temp", &(*pointerPodatki).temp, 30, 0);
+				break;
+			case 4:
+				*pointerPodatki = privzeto;
+				zapisiNaEEPROM((unsigned int)stUporabnika * sizeof(podatki), *pointerPodatki);
+				prikazPonastaviNastavitve(stUporabnika + 1);
+				break;
+			}
+		} else if(meniPointer == uporabniki) {
+			switch(zacetek) {
+			case -1:
+				meniPointer = glavniMeni;
+				velikostPointer = &velikostGM;
+				break;
+			default:
+				stUporabnika = zacetek;
+				pointerPodatki = uporabnik + stUporabnika;
+				EEPROM.write(6*sizeof(podatki),stUporabnika);
+				uporabnikSpremenjen(stUporabnika + 1);
+				break;
 			}
 		}
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////7
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 int prikazujMeni(char **meniPointer, int velikostMenija) {
 	char a = NULL;
 	int zacetek = 0;
@@ -188,47 +256,6 @@ int prikazujMeni(char **meniPointer, int velikostMenija) {
 	return zacetek;
 }
 
-void prikazOsnovni(void) { //najbolj osnoven prikaz (pokaže meritve vseh senzorjev na mikrokontrolerju)
-	static unsigned long int time1 = millis();
-	float temp, dolzina;
-	int hitrost, koef;
-	lcd.clear();
-	lcd.noCursor();
-	char a = NULL; //inicializirano da nebi slučajno takoj skočlo vn iz prikaza, preden prvič vstopiš v while zanko
-	lcd.setCursor(0, 0);
-	lcd.print("Temperatura: ");
-	lcd.setCursor(0, 1);
-	lcd.print("Razdalja: ");
-	lcd.setCursor(0, 2);
-	lcd.print("Hitrost: ");
-	lcd.setCursor(0, 3);
-	lcd.print("Koeficient: ");
-	while (a != NAZAJ) {
-		if (millis() - time1 > 500) {
-
-			temp = temperatura();
-			dolzina = razdalja();
-			hitrost = Hitrost();
-			koef = koefVarnostneRazdalje(hitrost, dolzina, msVarnostneRazdalje);
-			lcd.setCursor(12, 0);
-			lcd.print(temp);
-			lcd.print(" C");
-			lcd.setCursor(9, 1);
-			lcd.print(dolzina);
-			lcd.print(" m   ");
-			lcd.setCursor(8, 2);
-			lcd.print(hitrost);
-			lcd.print(" km/h   ");
-			lcd.setCursor(11, 3);
-			lcd.print(koef);
-			lcd.print("   ");
-			time1 += 500;
-		}
-		a = customKeypad.getKey();
-	}
-	lcd.cursor();
-	lcd.clear();
-}
 
 void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni) {
 	if (velikostMenija < 4) {
@@ -253,6 +280,146 @@ void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni) {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void prikazOsnovni(void) { //najbolj osnoven prikaz (pokaže meritve vseh senzorjev na mikrokontrolerju)
+	float temp, dolzina;
+	int hitrost, koef;
+	lcd.clear();
+	lcd.noCursor();
+	char a = NULL; //inicializirano da nebi slučajno takoj skočlo vn iz prikaza, preden prvič vstopiš v while zanko
+	lcd.setCursor(0, 0);
+	lcd.print("Temperatura: ");
+	lcd.setCursor(0, 1);
+	lcd.print("Razdalja: ");
+	lcd.setCursor(0, 2);
+	lcd.print("Hitrost: ");
+	lcd.setCursor(0, 3);
+	lcd.print("Koeficient: ");
+	unsigned long int time1 = millis();
+	while (a != NAZAJ) {
+		if (millis() - time1 > (*pointerPodatki).refreshRate) {
+
+			temp = temperatura();
+			dolzina = razdalja();
+			hitrost = Hitrost();
+			koef = koefVarnostneRazdalje(hitrost, dolzina, (*pointerPodatki).msVarnostneRazdalje);
+			if(temp < (*pointerPodatki).temp){
+				koef = koefVarnostneRazdalje(hitrost, dolzina, ((*pointerPodatki).msVarnostneRazdalje * ((*pointerPodatki).koefTemp / 10))/10);
+			}
+			lcd.setCursor(12, 0);
+			lcd.print(temp);
+			lcd.print(" C ");
+			lcd.setCursor(9, 1);
+			lcd.print(dolzina);
+			lcd.print(" m   ");
+			lcd.setCursor(8, 2);
+			lcd.print(hitrost);
+			lcd.print(" km/h   ");
+			lcd.setCursor(11, 3);
+			lcd.print(koef);
+			lcd.print("   ");
+			time1 += (*pointerPodatki).refreshRate;
+		}
+		a = customKeypad.getKey();
+	}
+	lcd.cursor();
+	lcd.clear();
+}
+
+
+void prikazRazdalje(void) {
+	int idealVarnostna, varnostna;
+	lcd.clear();
+	lcd.noCursor();
+	char a = NULL; //inicializirano da nebi slučajno takoj skočlo vn iz prikaza, preden prvič vstopiš v while zanko
+	lcd.setCursor(0, 0);
+	lcd.print("Varnostna razdalja: ");
+	lcd.setCursor(0, 2);
+	lcd.print("Idealna varnostna: ");
+	unsigned long int time1 = millis();
+	while (a != NAZAJ) {
+		if (millis() - time1 > (*pointerPodatki).refreshRate) {
+			varnostna = razdalja();
+			idealVarnostna = idealnaVarnostna(Hitrost(), (*pointerPodatki).msVarnostneRazdalje);
+			if(temperatura() < (*pointerPodatki).temp){
+				idealVarnostna = idealnaVarnostna(Hitrost(), ((*pointerPodatki).msVarnostneRazdalje * ((*pointerPodatki).koefTemp / 10))/10);
+			}
+			lcd.setCursor(8, 1);
+			lcd.print(varnostna);
+			lcd.print("m     ");
+			lcd.setCursor(8, 3);
+			lcd.print(idealVarnostna);
+			lcd.print("m     ");
+			time1 += (*pointerPodatki).refreshRate;
+		}
+		a = customKeypad.getKey();
+	}
+	lcd.cursor();
+	lcd.clear();
+}
+
+void prikazHitrost(void) {
+	char a = NULL;
+	lcd.clear();
+	lcd.noCursor();
+	lcd.print("Hitrost:");
+	unsigned long time1 = millis();
+	while (a != NAZAJ) {
+		if (millis() - time1 > (*pointerPodatki).refreshRate) {
+			lcd.setCursor(8, 1);
+			lcd.print(Hitrost());
+			lcd.print(" km/h   ");
+			time1 += (*pointerPodatki).refreshRate;
+		}
+		a = customKeypad.getKey();
+	}
+	lcd.cursor();
+}
+
+void prikazGraficni1(void) {
+	char a = NULL;
+	int zamikX = 0, zamikY = 0, koef;
+	lcd.clear();
+	lcd.noCursor();
+	unsigned long time1 = millis();
+	while (a != NAZAJ) {
+		if (millis() - time1 > (*pointerPodatki).refreshRate) {
+			lcd.setCursor(0,0);
+			lcd.print("                   ");
+			lcd.setCursor(0,1);
+			lcd.print("                   ");
+			lcd.setCursor(6,2);
+			lcd.print(char(5));
+			lcd.setCursor(6,3);
+			lcd.print(char(5));
+			for(int i = 0; i < 4; i++){
+				lcd.setCursor(19,i);
+				lcd.print(char(6));
+			}
+			if(temperatura() < (*pointerPodatki).temp){
+				koef = koefVarnostneRazdalje(Hitrost(), razdalja(), (*pointerPodatki).msVarnostneRazdalje);
+			}
+			koef = koefVarnostneRazdalje(Hitrost(), razdalja(), ((*pointerPodatki).msVarnostneRazdalje * ((*pointerPodatki).koefTemp / 10))/10);
+			zamikX = razdeli(koef, 0 , 150 , 16, 0);
+			lcd.setCursor(0 + zamikX, 1 + zamikY);
+			lcd.print(char(1));
+			lcd.setCursor(2 + zamikX, 1 + zamikY);
+			lcd.print(char(1));
+			lcd.setCursor(0 + zamikX, 0 + zamikY);
+			lcd.print(char(2));
+			lcd.setCursor(1 + zamikX, 0 + zamikY);
+			lcd.print(char(3));
+			lcd.setCursor(2 + zamikX, 0 + zamikY);
+			lcd.print(char(4));
+			time1 += (*pointerPodatki).refreshRate;
+		}
+		a = customKeypad.getKey();
+	}
+	lcd.cursor();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void prikazSpremenjen(char tekst[]) {
 	lcd.clear();
 	lcd.setCursor(0, 1);
@@ -267,100 +434,51 @@ void prikazSpremenjen(char tekst[]) {
 	lcd.clear();
 }
 
-void prikazRazdalje(void) {
-	static unsigned long int time1 = millis();
-	int idealVarnostna, varnostna;
+void uporabnikSpremenjen(int stUporabnika) {
 	lcd.clear();
-	lcd.noCursor();
-	char a = NULL; //inicializirano da nebi slučajno takoj skočlo vn iz prikaza, preden prvič vstopiš v while zanko
 	lcd.setCursor(0, 0);
-	lcd.print("Varnostna razdalja: ");
+	lcd.print("Uporabnik");
+	lcd.setCursor(0, 1);
+	lcd.print("spremenjen:");
 	lcd.setCursor(0, 2);
-	lcd.print("Idealna varnostna: ");
-	while (a != NAZAJ) {
-		if (millis() - time1 > 500) {
-			varnostna = razdalja();
-			idealVarnostna = idealnaVarnostna(Hitrost(), msVarnostneRazdalje);
-			lcd.setCursor(8, 1);
-			lcd.print(varnostna);
-			lcd.print("m     ");
-			lcd.setCursor(8, 3);
-			lcd.print(idealVarnostna);
-			lcd.print("m     ");
-			time1 += 500;
-		}
-		a = customKeypad.getKey();
-	}
-	lcd.cursor();
-	lcd.clear();
-}
-
-void prikazHitrost(void) {
-	char a = NULL;
-	static unsigned long time1 = millis();
-	lcd.clear();
+	lcd.print(stUporabnika);
+	lcd.print(" uporabnik.");
 	lcd.noCursor();
-	lcd.print("Hitrost:");
-	while (a != NAZAJ) {
-		if (millis() - time1 > 500) {
-			lcd.setCursor(8, 1);
-			lcd.print(Hitrost());
-			lcd.print(" km/h   ");
-			time1 += 500;
-		}
-		a = customKeypad.getKey();
-	}
+	delay(1000);
 	lcd.cursor();
-}
-
-void prikazGraficni1(void) {
-	char a = NULL;
-	int zamikX = 0, zamikY = 0, koef;
-
-	static unsigned long time1 = millis();
 	lcd.clear();
-	lcd.noCursor();
-	while (a != NAZAJ) {
-		if (millis() - time1 > 500) {
-			lcd.setCursor(0,0);
-			lcd.print("                   ");
-			lcd.setCursor(0,1);
-			lcd.print("                   ");
-			lcd.setCursor(6,2);
-			lcd.print(char(5));
-			lcd.setCursor(6,3);
-			lcd.print(char(5));
-			for(int i = 0; i < 4; i++){
-				lcd.setCursor(19,i);
-				lcd.print(char(6));
-			}
-			koef = koefVarnostneRazdalje(Hitrost(), razdalja(), msVarnostneRazdalje);
-			zamikX = razdeli(koef, 0 , 150 , 16, 0);
-			lcd.setCursor(0 + zamikX, 1 + zamikY);
-			lcd.print(char(1));
-			lcd.setCursor(2 + zamikX, 1 + zamikY);
-			lcd.print(char(1));
-			lcd.setCursor(0 + zamikX, 0 + zamikY);
-			lcd.print(char(2));
-			lcd.setCursor(1 + zamikX, 0 + zamikY);
-			lcd.print(char(3));
-			lcd.setCursor(2 + zamikX, 0 + zamikY);
-			lcd.print(char(4));
-			time1 += 500;
-		}
-		a = customKeypad.getKey();
-	}
-	lcd.cursor();
 }
 
-void spremeniIdealnoVarnostno(void){
+void prikazPonastaviNastavitve(int stUporabnika) {
+	lcd.clear();
+	lcd.setCursor(0, 0);
+	lcd.print("Nastavitve pooenost. ");
+	lcd.setCursor(0, 1);
+	lcd.print("za uporabnika ");
+	lcd.print(stUporabnika);
+	lcd.noCursor();
+	delay(1000);
+	lcd.cursor();
+	lcd.clear();
+}
+
+
+
+
+
+void spremeniPodatek(char tekst[10], int *podatek, int maks, int min){
 	char a = NULL;
 	int celota = 0, i ;
 	lcd.clear();
 	lcd.setCursor(0, 0);
-	lcd.print("Idealna varnostna: ");
+	lcd.print("Vrednost ");
+	lcd.print(tekst);
+	lcd.print(": ");
 	lcd.setCursor(0, 1);
-	lcd.print(msVarnostneRazdalje);
+	lcd.print(*podatek);
+	lcd.setCursor(0,2);
+	lcd.print("Uporabnik: ");
+	lcd.print((unsigned int)stUporabnika +1);
 	lcd.setCursor(0,3);
 	lcd.print("Spremeba --> D  ");
 	while (a != NAZAJ) {
@@ -368,9 +486,15 @@ void spremeniIdealnoVarnostno(void){
 		if(a == 'D'){
 			lcd.clear();
 			lcd.setCursor(0,0);
-			lcd.print("Vpisite ms: ");
+			lcd.print("Vpisite ");
+			lcd.print(tekst);
+			lcd.print(": ");
 			lcd.setCursor(0,1);
-			lcd.print("(med 500 in 5000)");
+			lcd.print("(med ");
+			lcd.print(min);
+			lcd.print(" in ");
+			lcd.print(maks);
+			lcd.print(")");
 			lcd.setCursor(0,2);
 			lcd.print("Koncaj --> A");
 			lcd.setCursor(0,3);
@@ -392,8 +516,9 @@ void spremeniIdealnoVarnostno(void){
 				lcd.cursor();
 				return;
 			}
-			else if(500 < celota && celota < 5000){
-				 msVarnostneRazdalje = celota;
+			else if(min <= celota && celota <= maks){
+				 *podatek = celota;
+				 zapisiNaEEPROM((unsigned int)stUporabnika * sizeof(podatki), *pointerPodatki);
 				 lcd.clear();
 				 lcd.noCursor();
 				 lcd.print("Vnos uspel");
@@ -413,26 +538,20 @@ void spremeniIdealnoVarnostno(void){
 	}
 }
 
-void izbrisiToFunkcijo(void) {
-	int stevilo = 0;
-	char a;
-	int celota = 0;
-	lcd.clear();
-	lcd.setCursor(0, 0);
-	lcd.print("Kalkulator");
-	lcd.setCursor(0, 1);
-	while (1) {
-		a = customKeypad.getKey();
-		if (a >= '0' && a <= '9') {
-			a -= '0';
-			celota *= 10;
-			celota += (int) a;
-			lcd.print((int) a);
-		} else if (a == NAZAJ) {
-			celota += 5000;
-			lcd.print("                  ");
-			lcd.print(celota);
-		}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+////EEPROM/////
+
+void zapisiNaEEPROM(int naslov, podatki podatek){
+	byte *pointer = (byte*)&podatek;
+	for(int i = 0; i < sizeof(podatki); i++){
+		EEPROM.write((naslov + i),*(pointer + i));
+	}
+}
+
+void beriIzEEPROM(int naslov, podatki *podatek){
+	byte *pointer = (byte*)podatek;
+	for(int i = 0; i < sizeof(podatki); i++){
+		*(pointer + i) = EEPROM.read(naslov + i);
 	}
 }
 

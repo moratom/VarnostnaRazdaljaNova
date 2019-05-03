@@ -12,6 +12,7 @@
 #include <Keypad.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <EEPROM.h>
 
 
 #define pinEcho 2
@@ -19,6 +20,14 @@
 #define pinTemp A1
 #define pinHitrost A2
 #define NAZAJ '*'
+
+typedef struct {
+	/*
+	 * Podatki za vsakega uporabnika
+	 */
+	int msVarnostneRazdalje, refreshRate, koefTemp, temp;
+	void (*prikazPointer)();
+} podatki;
 
 
 //FUNKCIJE ZA MENI
@@ -30,17 +39,22 @@ void prikazHitrost(void);
 void prikazSpremenjen(char tekst[]);
 void izbrisiToFunkcijo(void);
 void prikazGraficni1(void);
-void spremeniIdealnoVarnostno(void);
+void spremeniPodatek(char tekst[20], int *podatek, int maks, int min);
+void uporabnikSpremenjen(int stUporabnika);
+void prikazPonastaviNastavitve(int stUporabnika);
 
 
 //SENZORJI
 float temperatura(void);
 float razdalja(void);
 int Hitrost(void);
-int idealnaVarnostna(int hitrost, int msIdealneVarnostne);
-int koefVarnostneRazdalje(int hitrost, float razdalja, int msIdealneVarnostne);
+int idealnaVarnostna(int hitrost, long msIdealneVarnostne);
+int koefVarnostneRazdalje(int hitrost, float razdalja, long msIdealneVarnostne);
 long razdeli(long x, long in_min, long in_max, long out_min, long out_max);
 
+//EEPROM
+void zapisiNaEEPROM(int naslov, podatki podatek);
+void beriIzEEPROM(int naslov, podatki *podatek);
 
 
 

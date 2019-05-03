@@ -21,6 +21,10 @@ float temperatura(void){
 
 
 float razdalja(void){
+  /*
+   * Deluje tako, da pošlje signal ultrasoničnemu senzorju in potem
+   * s funkcijo pulseIn meri čas ki traja, da senzor zazna povraten pulz.
+   */
   int duration;
   float distance;
   digitalWrite(pinTrig, LOW);
@@ -34,16 +38,23 @@ float razdalja(void){
 }
 
 int Hitrost(void){
+	/*
+	 * Hitrost za debuging (navaden potenciometer)
+	 */
 	int napetost = analogRead(pinHitrost);
 	int hitrost = razdeli(napetost, 0 , 1024, 0 , 220);
 	return hitrost;
 }
 
-int idealnaVarnostna(int hitrost, int msIdealneVarnostne){
+int idealnaVarnostna(int hitrost, long msIdealneVarnostne){
 	return ((float)hitrost / 3.6) * (float)msIdealneVarnostne / 1000;
 }
 
-int koefVarnostneRazdalje(int hitrost, float razdalja, int msIdealneVarnostne){ //vrne koeficiet med 0 - 300, kjer je 100 idealana razdalja, 300 pa 3x itd
+int koefVarnostneRazdalje(int hitrost, float razdalja, long msIdealneVarnostne){
+	/*
+	 * vrne koeficiet med 0 - 300, kjer je 100 idealana razdalja, 200 pa 2x
+	 * če je varnostna razdalja več kot 2x vseeno vrne 200
+	 */
 	int idealVarnostna = idealnaVarnostna(hitrost, msIdealneVarnostne);
 	int koef = (int)(100* razdalja) / idealVarnostna;
 	if(hitrost < 15) return 0;
@@ -52,6 +63,9 @@ int koefVarnostneRazdalje(int hitrost, float razdalja, int msIdealneVarnostne){ 
 }
 
 long razdeli(long x, long in_min, long in_max, long out_min, long out_max) {
+	/*
+	 * če dobiva vhode med in_min in in_max jih razdeli linerano v out_min in out_max
+	 */
 	if(x > in_max) x = in_max;
 	if(x < in_min) x = in_min;
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
