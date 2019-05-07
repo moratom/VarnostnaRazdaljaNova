@@ -13,6 +13,7 @@
 
 
 ////////////////////////////////////LCD IN KEYPAD INCIALIZACIJA CLASSOV/////////////////////////////
+
 LiquidCrystal_I2C lcd(0x3F, 20, 4);
 
 const byte ROWS = 4;
@@ -27,18 +28,20 @@ char hexaKeys[ROWS][COLS] = {
 byte rowPins[ROWS] = { A15, A14, A13, A12 }; // @suppress("Symbol is not resolved")
 byte colPins[COLS] = { A11, A10, A9, A8 }; // @suppress("Symbol is not resolved")
 Keypad tipkovnica = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
-//////////////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//Velikosti menijev, incializirane kot spremenljivke, da se jih da podat po naslovu
 int velikostGM = velikostGlavniMeni;
 int velikostIP = velikostIzborPrikazaMeni;
 int velikostNS = velikostNastavitve;
 int velikostUP = velikostUporabniki;
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Deklarirani podatki in privzete nastavitve za uporabnika (glej v header file, kjer je definiran tip podatki
 podatki privzeto = {1500, 500,100, 3 , prikazOsnovni};
 podatki uporabnik[6];
 podatki *pointerPodatki = &privzeto;
-byte stUporabnika;
+byte stUporabnika; //podatek o tem kdo je trenutni uporabnik
 
 
 
@@ -60,9 +63,6 @@ byte zadnjiDel[8] { 0x0, 0x0, 0x0, 0x0, 0x10, 0x1F, 0x1F, 0x1F, };
 byte crtaDesna[8] = {0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1};
 
 byte polniBlok[8] = {0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F};
-
-
-
 ////////////////////////////////////////////////777
 
 
@@ -109,8 +109,8 @@ int main() {
 	lcd.init();
 	lcd.backlight();
 	lcd.cursor();
-	/////////////////////////////////////////////////
-
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7
+	//Ustvari nove znake za grafiko
 	lcd.createChar(1, kolo);
 	lcd.createChar(2, prednjiDel);
 	lcd.createChar(3, srednjiDel);
@@ -128,13 +128,13 @@ int main() {
 	pointerPodatki = uporabnik + stUporabnika;
 
 
-	//////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	prikaziMeni(0, velikostGM, glavniMeni);
 	int *velikostPointer = &velikostGM;
 	char **meniPointer = glavniMeni;
 	int zacetek;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////77
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	while (1) {
 		zacetek = prikazujMeni(meniPointer, *velikostPointer);
 		if (meniPointer == glavniMeni) {
@@ -198,7 +198,7 @@ int main() {
 				spremeniPodatek("varnostna","ms",&(*pointerPodatki).msVarnostneRazdalje, 5000 , 500);
 				break;
 			case 1:
-				spremeniPodatek("koef temp", " ",&(*pointerPodatki).koefTemp, 300 , 100);
+				spremeniPodatek("koef temp", "%",&(*pointerPodatki).koefTemp, 300 , 100);
 				break;
 			case 2:
 				spremeniPodatek("refr rate", "ms",&(*pointerPodatki).refreshRate, 2000, 100);
@@ -221,7 +221,8 @@ int main() {
 			default:
 				stUporabnika = zacetek;
 				pointerPodatki = uporabnik + stUporabnika;
-				EEPROM.write(6*sizeof(podatki),stUporabnika);
+				EEPROM.write(6*sizeof(podatki),stUporabnika); //vrednost stUporabnika se nahaja za podatki
+				meniPointer = nastavitve;
 				uporabnikSpremenjen(stUporabnika + 1);
 				break;
 			}
@@ -230,7 +231,12 @@ int main() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 int prikazujMeni(char **meniPointer, int velikostMenija) {
+	/*
+	 * Funkcija prikazuje meni, ki ji ga podamo, številko izbire, kjer uporabnik stisne '5' oz izbere opcijo menija
+	 * če uporabnik pritisne tipo za se vrnit, funkcija vrne -1
+	 */
 	char a = NULL;
 	int zacetek = 0;
 	lcd.clear();
@@ -239,14 +245,20 @@ int prikazujMeni(char **meniPointer, int velikostMenija) {
 		a = tipkovnica.getKey();
 		if (a == NAZAJ)
 			return -1;
-		if (a == '2' && zacetek > 0) {
-			zacetek -= 1;
-			prikaziMeni(zacetek, velikostMenija, meniPointer);
+		if (a == '2' ) {
+			if(zacetek > 0){
+				zacetek -= 1;
+				prikaziMeni(zacetek, velikostMenija, meniPointer);
+			}
+			else{ // Če je na vrhu gre nazaj na dno.
+				zacetek = velikostMenija - 1;
+				prikaziMeni(zacetek, velikostMenija, meniPointer);
+			}
 		}
 		if (a == '8') {
 			if (zacetek < velikostMenija - 1) {
 				zacetek += 1;
-			} else {
+			} else { //Če je na dnu gre nazaj na vrh
 				zacetek = 0;
 			}
 			prikaziMeni(zacetek, velikostMenija, meniPointer);
@@ -255,23 +267,24 @@ int prikazujMeni(char **meniPointer, int velikostMenija) {
 	return zacetek;
 }
 
-
 void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni) {
-	if (velikostMenija < 4) {
+	/*
+	 * Funkcija prejme array stringov in ga prikaže.
+	 */
+	if (velikostMenija < 4) { //Pobriše samo prazne vrstice, dela boljše kot lcd.clear(), ker potem ni utripanja
 		for (int i = 4 - velikostMenija; i > 0; i--) {
 			lcd.setCursor(0, 4 - i);
 			lcd.print("                   ");
 		}
 	}
-	if (zacetekPrikaza <= 3) {
+	if (zacetekPrikaza <= 3) { //Vedno prikaže isto, premika se le cursor
 		for (int i = 0, k = 0; i <= 3 && i < velikostMenija; i++, k++) {
 			lcd.setCursor(0, k);
 			lcd.print(meni[i]);
 			lcd.setCursor(19, zacetekPrikaza);
 		}
-	} else {
-		for (int i = zacetekPrikaza - 3, k = 0;
-				i < velikostMenija && i <= zacetekPrikaza; i++, k++) {
+	} else {//Prikaže tistega na ki je zbran in 3 nad njim
+		for (int i = zacetekPrikaza - 3, k = 0; i < velikostMenija && i <= zacetekPrikaza; i++, k++) {
 			lcd.setCursor(0, k);
 			lcd.print(meni[i]);
 			lcd.setCursor(19, 3);
@@ -451,7 +464,7 @@ void uporabnikSpremenjen(int stUporabnika) {
 void prikazPonastaviNastavitve(int stUporabnika) {
 	lcd.clear();
 	lcd.setCursor(0, 0);
-	lcd.print("Nastavitve pooenost. ");
+	lcd.print("Nastavitve ponast. ");
 	lcd.setCursor(0, 1);
 	lcd.print("za uporabnika ");
 	lcd.print(stUporabnika);
@@ -466,6 +479,10 @@ void prikazPonastaviNastavitve(int stUporabnika) {
 
 
 void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int min){
+	/*
+	 * Funkcija omogoči spreminjane podatka in samodejno zapiše vse podatke
+	 * o uporabniku na EEPROM
+	 */
 	char a = NULL;
 	int celota = 0, i ;
 	lcd.clear();
@@ -475,7 +492,6 @@ void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int mi
 	lcd.print(": ");
 	lcd.setCursor(0, 1);
 	lcd.print(*podatek);
-	lcd.print(" ");
 	lcd.print(enota);
 	lcd.setCursor(0,2);
 	lcd.print("Uporabnik: ");
@@ -485,6 +501,7 @@ void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int mi
 	while (a != NAZAJ) {
 		a = tipkovnica.getKey();
 		if(a == 'D'){
+			a = NULL;
 			lcd.clear();
 			lcd.setCursor(0,0);
 			lcd.print("Vpisite ");
@@ -543,6 +560,9 @@ void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int mi
 ////EEPROM/////
 
 void zapisiNaEEPROM(int naslov, podatki podatek){
+	/*
+	 * Zapise podatke od podanega naslova na EEPROM
+	 */
 	byte *pointer = (byte*)&podatek;
 	for(int i = 0; i < sizeof(podatki); i++){
 		EEPROM.write((naslov + i),*(pointer + i));
