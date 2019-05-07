@@ -17,6 +17,5 @@ project/VarnostnaRazdalja.cpp.o: ../../VarnostnaRazdalja.cpp \
  /root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino/Print.h \
  /root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/Wire/src/Wire.h \
  /root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/cores/arduino/Stream.h \
- /root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/standard/pins_arduino.h \
  ../../Varnostna.h \
  /root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/libraries/EEPROM/src/EEPROM.h

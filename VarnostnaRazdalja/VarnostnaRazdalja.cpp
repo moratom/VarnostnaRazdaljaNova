@@ -4,7 +4,6 @@
 #include <LiquidCrystal_I2C.h>
 #include <stddef.h>
 
-#include "/root/.arduinocdt/packages/arduino/hardware/avr/1.6.23/variants/standard/pins_arduino.h"
 #include "Varnostna.h"
 
 #define velikostGlavniMeni 4
@@ -16,9 +15,9 @@
 ////////////////////////////////////LCD IN KEYPAD INCIALIZACIJA CLASSOV/////////////////////////////
 LiquidCrystal_I2C lcd(0x3F, 20, 4);
 
-const byte ROWS = 4; //four rows
-const byte COLS = 4; //four columns
-//define the cymbols on the buttons of the keypads
+const byte ROWS = 4;
+const byte COLS = 4;
+
 char hexaKeys[ROWS][COLS] = {
  { '1', '2', '3', 'A' },
  { '4', '5', '6', 'B' },
@@ -27,7 +26,7 @@ char hexaKeys[ROWS][COLS] = {
  };
 byte rowPins[ROWS] = { A15, A14, A13, A12 }; // @suppress("Symbol is not resolved")
 byte colPins[COLS] = { A11, A10, A9, A8 }; // @suppress("Symbol is not resolved")
-Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
+Keypad tipkovnica = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 int velikostGM = velikostGlavniMeni;
@@ -196,16 +195,16 @@ int main() {
 				velikostPointer = &velikostGM;
 				break;
 			case 0:
-				spremeniPodatek("varnostna",&(*pointerPodatki).msVarnostneRazdalje, 5000 , 500);
+				spremeniPodatek("varnostna","ms",&(*pointerPodatki).msVarnostneRazdalje, 5000 , 500);
 				break;
 			case 1:
-				spremeniPodatek("koef temp",&(*pointerPodatki).koefTemp, 300 , 100);
+				spremeniPodatek("koef temp", " ",&(*pointerPodatki).koefTemp, 300 , 100);
 				break;
 			case 2:
-				spremeniPodatek("refr rate", &(*pointerPodatki).refreshRate, 2000, 100);
+				spremeniPodatek("refr rate", "ms",&(*pointerPodatki).refreshRate, 2000, 100);
 				break;
 			case 3:
-				spremeniPodatek("mejna temp", &(*pointerPodatki).temp, 30, 0);
+				spremeniPodatek("mejna temp", "C",&(*pointerPodatki).temp, 30, 0);
 				break;
 			case 4:
 				*pointerPodatki = privzeto;
@@ -237,7 +236,7 @@ int prikazujMeni(char **meniPointer, int velikostMenija) {
 	lcd.clear();
 	prikaziMeni(0, velikostMenija, meniPointer);
 	while (a != '5') {
-		a = customKeypad.getKey();
+		a = tipkovnica.getKey();
 		if (a == NAZAJ)
 			return -1;
 		if (a == '2' && zacetek > 0) {
@@ -321,7 +320,7 @@ void prikazOsnovni(void) { //najbolj osnoven prikaz (pokaže meritve vseh senzor
 			lcd.print("   ");
 			time1 += (*pointerPodatki).refreshRate;
 		}
-		a = customKeypad.getKey();
+		a = tipkovnica.getKey();
 	}
 	lcd.cursor();
 	lcd.clear();
@@ -353,7 +352,7 @@ void prikazRazdalje(void) {
 			lcd.print("m     ");
 			time1 += (*pointerPodatki).refreshRate;
 		}
-		a = customKeypad.getKey();
+		a = tipkovnica.getKey();
 	}
 	lcd.cursor();
 	lcd.clear();
@@ -372,7 +371,7 @@ void prikazHitrost(void) {
 			lcd.print(" km/h   ");
 			time1 += (*pointerPodatki).refreshRate;
 		}
-		a = customKeypad.getKey();
+		a = tipkovnica.getKey();
 	}
 	lcd.cursor();
 }
@@ -414,7 +413,7 @@ void prikazGraficni1(void) {
 			lcd.print(char(4));
 			time1 += (*pointerPodatki).refreshRate;
 		}
-		a = customKeypad.getKey();
+		a = tipkovnica.getKey();
 	}
 	lcd.cursor();
 }
@@ -466,7 +465,7 @@ void prikazPonastaviNastavitve(int stUporabnika) {
 
 
 
-void spremeniPodatek(char tekst[10], int *podatek, int maks, int min){
+void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int min){
 	char a = NULL;
 	int celota = 0, i ;
 	lcd.clear();
@@ -476,13 +475,15 @@ void spremeniPodatek(char tekst[10], int *podatek, int maks, int min){
 	lcd.print(": ");
 	lcd.setCursor(0, 1);
 	lcd.print(*podatek);
+	lcd.print(" ");
+	lcd.print(enota);
 	lcd.setCursor(0,2);
 	lcd.print("Uporabnik: ");
 	lcd.print((unsigned int)stUporabnika +1);
 	lcd.setCursor(0,3);
-	lcd.print("Spremeba --> D  ");
+	lcd.print("Spremeni vrednost: D");
 	while (a != NAZAJ) {
-		a = customKeypad.getKey();
+		a = tipkovnica.getKey();
 		if(a == 'D'){
 			lcd.clear();
 			lcd.setCursor(0,0);
@@ -496,10 +497,10 @@ void spremeniPodatek(char tekst[10], int *podatek, int maks, int min){
 			lcd.print(maks);
 			lcd.print(")");
 			lcd.setCursor(0,2);
-			lcd.print("Koncaj --> A");
+			lcd.print("Za zakljucit: D");
 			lcd.setCursor(0,3);
-			for(i = 0;a != 'A'&& i < 5;){
-				a = customKeypad.getKey();
+			for(i = 0;a != 'D'&& i < 5;){
+				a = tipkovnica.getKey();
 				if (a >= '0' && a <= '9') {
 					a -= '0';
 					celota *= 10;

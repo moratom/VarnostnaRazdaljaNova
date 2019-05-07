@@ -39,7 +39,7 @@ void prikazHitrost(void);
 void prikazSpremenjen(char tekst[]);
 void izbrisiToFunkcijo(void);
 void prikazGraficni1(void);
-void spremeniPodatek(char tekst[20], int *podatek, int maks, int min);
+void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int min);
 void uporabnikSpremenjen(int stUporabnika);
 void prikazPonastaviNastavitve(int stUporabnika);
 
