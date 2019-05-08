@@ -297,6 +297,7 @@ void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni) {
 void prikazOsnovni(void) { //najbolj osnoven prikaz (pokaže meritve vseh senzorjev na mikrokontrolerju)
 	float temp, dolzina;
 	int hitrost, koef;
+	long msNove = (long)(*pointerPodatki).msVarnostneRazdalje * (long)(*pointerPodatki).koefTemp /100;
 	lcd.clear();
 	lcd.noCursor();
 	char a = NULL; //inicializirano da nebi slučajno takoj skočlo vn iz prikaza, preden prvič vstopiš v while zanko
@@ -317,7 +318,7 @@ void prikazOsnovni(void) { //najbolj osnoven prikaz (pokaže meritve vseh senzor
 			hitrost = Hitrost();
 			koef = koefVarnostneRazdalje(hitrost, dolzina, (*pointerPodatki).msVarnostneRazdalje);
 			if(temp < (*pointerPodatki).temp){
-				koef = koefVarnostneRazdalje(hitrost, dolzina, ((*pointerPodatki).msVarnostneRazdalje * ((*pointerPodatki).koefTemp / 10))/10);
+				koef = koefVarnostneRazdalje(hitrost, dolzina,(int)msNove);
 			}
 			lcd.setCursor(12, 0);
 			lcd.print(temp);
@@ -342,6 +343,7 @@ void prikazOsnovni(void) { //najbolj osnoven prikaz (pokaže meritve vseh senzor
 
 void prikazRazdalje(void) {
 	int idealVarnostna, varnostna;
+	long msNove = (long)(*pointerPodatki).msVarnostneRazdalje * (long)(*pointerPodatki).koefTemp /100;
 	lcd.clear();
 	lcd.noCursor();
 	char a = NULL; //inicializirano da nebi slučajno takoj skočlo vn iz prikaza, preden prvič vstopiš v while zanko
@@ -355,7 +357,7 @@ void prikazRazdalje(void) {
 			varnostna = razdalja();
 			idealVarnostna = idealnaVarnostna(Hitrost(), (*pointerPodatki).msVarnostneRazdalje);
 			if(temperatura() < (*pointerPodatki).temp){
-				idealVarnostna = idealnaVarnostna(Hitrost(), ((*pointerPodatki).msVarnostneRazdalje * ((*pointerPodatki).koefTemp / 10))/10);
+				idealVarnostna = idealnaVarnostna(Hitrost(),(int)msNove);
 			}
 			lcd.setCursor(8, 1);
 			lcd.print(varnostna);
@@ -392,38 +394,43 @@ void prikazHitrost(void) {
 void prikazGraficni1(void) {
 	char a = NULL;
 	int zamikX = 0, zamikY = 0, koef;
+	long msNove = (long)(*pointerPodatki).msVarnostneRazdalje * (long)(*pointerPodatki).koefTemp /100;
 	lcd.clear();
 	lcd.noCursor();
 	unsigned long time1 = millis();
 	while (a != NAZAJ) {
 		if (millis() - time1 > (*pointerPodatki).refreshRate) {
-			lcd.setCursor(0,0);
-			lcd.print("                   ");
-			lcd.setCursor(0,1);
-			lcd.print("                   ");
-			lcd.setCursor(6,2);
-			lcd.print(char(5));
-			lcd.setCursor(6,3);
-			lcd.print(char(5));
-			for(int i = 0; i < 4; i++){
-				lcd.setCursor(19,i);
-				lcd.print(char(6));
-			}
-			if(temperatura() < (*pointerPodatki).temp){
+			if(temperatura() > (*pointerPodatki).temp){
 				koef = koefVarnostneRazdalje(Hitrost(), razdalja(), (*pointerPodatki).msVarnostneRazdalje);
 			}
-			koef = koefVarnostneRazdalje(Hitrost(), razdalja(), ((*pointerPodatki).msVarnostneRazdalje * ((*pointerPodatki).koefTemp / 10))/10);
-			zamikX = razdeli(koef, 0 , 150 , 16, 0);
-			lcd.setCursor(0 + zamikX, 1 + zamikY);
-			lcd.print(char(1));
-			lcd.setCursor(2 + zamikX, 1 + zamikY);
-			lcd.print(char(1));
-			lcd.setCursor(0 + zamikX, 0 + zamikY);
-			lcd.print(char(2));
-			lcd.setCursor(1 + zamikX, 0 + zamikY);
-			lcd.print(char(3));
-			lcd.setCursor(2 + zamikX, 0 + zamikY);
-			lcd.print(char(4));
+			else {
+				koef = koefVarnostneRazdalje(Hitrost(), razdalja(), (int)msNove);
+			}
+			if( zamikX != razdeli(koef,0, 150,16,0)){ //Popravljeno utripanje avta (na novo nariše avto, samo če se spremeni pozicija)
+				zamikX = razdeli(koef,0 ,150 ,16 ,0);
+				lcd.setCursor(0,0);
+				lcd.print("                   ");
+				lcd.setCursor(0,1);
+				lcd.print("                   ");
+				lcd.setCursor(6,2);
+				lcd.print(char(5));
+				lcd.setCursor(6,3);
+				lcd.print(char(5));
+				for(int i = 0; i < 4; i++){
+					lcd.setCursor(19,i);
+					lcd.print(char(6));
+				}
+				lcd.setCursor(0 + zamikX, 1 + zamikY);
+				lcd.print(char(1));
+				lcd.setCursor(2 + zamikX, 1 + zamikY);
+				lcd.print(char(1));
+				lcd.setCursor(0 + zamikX, 0 + zamikY);
+				lcd.print(char(2));
+				lcd.setCursor(1 + zamikX, 0 + zamikY);
+				lcd.print(char(3));
+				lcd.setCursor(2 + zamikX, 0 + zamikY);
+				lcd.print(char(4));
+			}
 			time1 += (*pointerPodatki).refreshRate;
 		}
 		a = tipkovnica.getKey();
