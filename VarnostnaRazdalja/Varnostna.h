@@ -20,13 +20,14 @@
 #define pinTemp A1
 #define pinHitrost A2
 #define NAZAJ '*'
+#define pinZvok 10
 
-typedef struct {
+typedef struct podatki{
 	/*
 	 * Podatki za vsakega uporabnika
 	 */
-	int msVarnostneRazdalje, refreshRate, koefTemp, temp;
-	void (*prikazPointer)();
+	int msVarnostneRazdalje, refreshRate, koefTemp, temp, zvok, lucke;
+	void (*prikazPointer)(struct podatki*);
 } podatki;
 
 typedef struct {
@@ -40,16 +41,18 @@ extern Keypad tipkovnica;
 //FUNKCIJE ZA MENI
 int prikazujMeni(char **meniPointer, int velikostMenija); //vrne kje v meniju je uporabnik izbral opcijo
 void prikaziMeni(int zacetekPrikaza, int velikostMenija, char **meni);
-void prikazOsnovni(void);
-void prikazRazdalje(void);
-void prikazHitrost(void);
+void prikazOsnovni(podatki* pointerPodatki);
+void prikazRazdalje(podatki* pointerPodatki);
+void prikazHitrost(podatki* pointerPodatki);
 void prikazSpremenjen(char tekst[]);
 void izbrisiToFunkcijo(void);
-void prikazGraficni1(void);
-void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int min);
+void prikazGraficni1(podatki* pointerPodatki);
+void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int min, byte stUporabnika, podatki* pointerPodatki);
 void uporabnikSpremenjen(int stUporabnika);
 void prikazPonastaviNastavitve(int stUporabnika);
 void prikaziAvto(int zamikX,int zamikY, slikica* slika);
+void izdelajZnake();
+void standardnoOpozaranjanje(podatki* pointerPodatki);
 
 
 //SENZORJI

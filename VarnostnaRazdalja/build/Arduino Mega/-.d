@@ -1,2 +1,2 @@
-.sc3509956056468148440.o: \
- /home/matevz/eclipseProjects/VarnostnaRazdalja/.sc3509956056468148440.cpp
+.sc7910927067656641544.o: \
+ /home/matevz/eclipseProjects/VarnostnaRazdalja/.sc7910927067656641544.cpp
