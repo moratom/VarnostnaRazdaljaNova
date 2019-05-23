@@ -34,6 +34,8 @@ typedef struct {
 	char slikica;
 }slikica;
 
+extern LiquidCrystal_I2C lcd;
+extern Keypad tipkovnica;
 
 //FUNKCIJE ZA MENI
 int prikazujMeni(char **meniPointer, int velikostMenija); //vrne kje v meniju je uporabnik izbral opcijo
