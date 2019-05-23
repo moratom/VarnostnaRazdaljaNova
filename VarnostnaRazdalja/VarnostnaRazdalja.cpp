@@ -55,6 +55,18 @@ byte prednjiDel[8] = { 0x0, 0x0, 0x0, 0x0, 0x1, 0x1F, 0x1F, 0x1F, };
 byte srednjiDel[8] = { 0x0, 0x0, 0x0, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, };
 
 byte zadnjiDel[8] { 0x0, 0x0, 0x0, 0x0, 0x10, 0x1F, 0x1F, 0x1F, };
+
+char Kolo = 1, PrednjiDel = 2, SrednjiDel = 3, ZadnjiDel = 4, CrtaDesna = 5, PolniBlok = 6; //že narejeni novi charracterji
+
+slikica avto[] = {
+		{0,1,Kolo},
+		{2,1,Kolo},
+		{0,0, PrednjiDel},
+		{1,0, SrednjiDel},
+		{2,0, ZadnjiDel},
+		{-1,-1, 0}
+};
+
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -408,28 +420,7 @@ void prikazGraficni1(void) {
 			}
 			if( zamikX != razdeli(koef,0, 150,16,0)){ //Popravljeno utripanje avta (na novo nariše avto, samo če se spremeni pozicija)
 				zamikX = razdeli(koef,0 ,150 ,16 ,0);
-				lcd.setCursor(0,0);
-				lcd.print("                   ");
-				lcd.setCursor(0,1);
-				lcd.print("                   ");
-				lcd.setCursor(6,2);
-				lcd.print(char(5));
-				lcd.setCursor(6,3);
-				lcd.print(char(5));
-				for(int i = 0; i < 4; i++){
-					lcd.setCursor(19,i);
-					lcd.print(char(6));
-				}
-				lcd.setCursor(0 + zamikX, 1 + zamikY);
-				lcd.print(char(1));
-				lcd.setCursor(2 + zamikX, 1 + zamikY);
-				lcd.print(char(1));
-				lcd.setCursor(0 + zamikX, 0 + zamikY);
-				lcd.print(char(2));
-				lcd.setCursor(1 + zamikX, 0 + zamikY);
-				lcd.print(char(3));
-				lcd.setCursor(2 + zamikX, 0 + zamikY);
-				lcd.print(char(4));
+				prikaziAvto(zamikX, zamikY, avto);
 			}
 			time1 += (*pointerPodatki).refreshRate;
 		}
@@ -439,6 +430,26 @@ void prikazGraficni1(void) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void prikaziAvto(int zamikX,int zamikY, slikica* slika){
+	lcd.setCursor(0,0);
+	lcd.print("                   ");
+	lcd.setCursor(0,1);
+	lcd.print("                   ");
+	lcd.setCursor(6,2);
+	lcd.print(CrtaDesna);
+	lcd.setCursor(6,3);
+	lcd.print(CrtaDesna);
+	for(int i = 0; i < 4; i++){
+		lcd.setCursor(19,i);
+		lcd.print(PolniBlok);
+	}
+	for(int i = 0; slika[i].x != -1; i++){
+		lcd.setCursor(slika[i].x + zamikX, slika[i].y + zamikY);
+		lcd.print(slika[i].slikica);
+	}
+}
+
+
 void prikazSpremenjen(char tekst[]) {
 	lcd.clear();
 	lcd.setCursor(0, 1);

@@ -29,6 +29,11 @@ typedef struct {
 	void (*prikazPointer)();
 } podatki;
 
+typedef struct {
+	int x,y;
+	char slikica;
+}slikica;
+
 
 //FUNKCIJE ZA MENI
 int prikazujMeni(char **meniPointer, int velikostMenija); //vrne kje v meniju je uporabnik izbral opcijo
@@ -42,6 +47,7 @@ void prikazGraficni1(void);
 void spremeniPodatek(char tekst[10],char enota[4],int *podatek, int maks, int min);
 void uporabnikSpremenjen(int stUporabnika);
 void prikazPonastaviNastavitve(int stUporabnika);
+void prikaziAvto(int zamikX,int zamikY, slikica* slika);
 
 
 //SENZORJI
