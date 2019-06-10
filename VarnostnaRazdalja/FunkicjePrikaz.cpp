@@ -48,6 +48,7 @@ int prikazujMeni(char **meniPointer, int velikostMenija) {
 	 */
 	char a = NULL;
 	int zacetek = 0;
+	digitalWrite(pinZvok, 0); //da je opozarjanje ugasnjeno ko si v meniju
 	lcd.clear();
 	lcd.cursor();
 	prikaziMeni(0, velikostMenija, meniPointer);
@@ -117,7 +118,7 @@ void prikazOsnovni(podatki* pointerPodatki) { //najbolj osnoven prikaz (pokaže 
 	lcd.print("Hitrost: ");
 	lcd.setCursor(0, 3);
 	lcd.print("Koeficient: ");
-	unsigned long int time1 = millis();
+	unsigned long int time1 = millis() - (*pointerPodatki).refreshRate;
 	while (a != NAZAJ) {
 		standardnoOpozaranjanje(pointerPodatki);
 		if (millis() - time1 > (*pointerPodatki).refreshRate) {
@@ -160,7 +161,7 @@ void prikazRazdalje(podatki* pointerPodatki) {
 	lcd.print("Varnostna razdalja: ");
 	lcd.setCursor(0, 2);
 	lcd.print("Idealna varnostna: ");
-	unsigned long int time1 = millis();
+	unsigned long int time1 = millis() - (*pointerPodatki).refreshRate;
 	while (a != NAZAJ) {
 		standardnoOpozaranjanje(pointerPodatki);
 		if (millis() - time1 > (*pointerPodatki).refreshRate) {
@@ -188,7 +189,7 @@ void prikazHitrost(podatki* pointerPodatki) {
 	lcd.clear();
 	lcd.noCursor();
 	lcd.print("Hitrost:");
-	unsigned long time1 = millis();
+	unsigned long time1 = millis() - (*pointerPodatki).refreshRate;
 	while (a != NAZAJ) {
 		standardnoOpozaranjanje(pointerPodatki);
 		if (millis() - time1 > (*pointerPodatki).refreshRate) {
@@ -208,7 +209,7 @@ void prikazGraficni1(podatki* pointerPodatki) {
 	long msNove = (long)(*pointerPodatki).msVarnostneRazdalje * (long)(*pointerPodatki).koefTemp /100;
 	lcd.clear();
 	lcd.noCursor();
-	unsigned long time1 = millis();
+	unsigned long time1 = millis() - (*pointerPodatki).refreshRate;
 	while (a != NAZAJ) {
 		standardnoOpozaranjanje(pointerPodatki);
 		if (millis() - time1 > (*pointerPodatki).refreshRate) {

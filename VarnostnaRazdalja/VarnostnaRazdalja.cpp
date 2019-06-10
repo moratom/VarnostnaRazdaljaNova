@@ -7,8 +7,8 @@
 #include "Varnostna.h"
 
 #define velikostGlavniMeni 4
-#define velikostIzborPrikazaMeni 5
-#define velikostNastavitve 7
+#define velikostIzborPrikazaMeni 4
+#define velikostNastavitve 6
 #define velikostUporabniki 6
 
 
@@ -55,8 +55,7 @@ char *izborPrikaza[] = {
 "Osnovni prikaz     ",
 "Hitrost            ",
 "Razdalje           ",
-"Graficni prikaz 1  ",
-"Graficni prikaz 2  ",
+"Graficni prikaz    ",
 };
 
 char *nastavitve[] = {
@@ -65,7 +64,6 @@ char *nastavitve[] = {
 "Refresh rate       ",
 "Mejna temperatura  ",
 "Zvocno opozorilo   ",
-"Svetlobno opozoril ",
 "Ponastavi privzeto ",
 };
 
@@ -97,8 +95,10 @@ int main(void) {
 	///EEPROM BRANJE///////////////////////////////////////////////////////////////////////////////////////////////
 	for(int i = 0; i < 6; i++){
 		beriIzEEPROM(i*(sizeof(podatki)), uporabnik + i);
-		//*(uporabnik + i) = privzeto; //ZA POENOSTAVIT VSE UPORABNIKE NA PRIVZETE VREDNOSTI
-		//zapisiNaEEPROM(i * sizeof(podatki), *(uporabnik + i));
+		/*//ZA POENOSTAVIT VSE UPORABNIKE NA PRIVZETE VREDNOSTI
+		*(uporabnik + i) = privzeto;
+		zapisiNaEEPROM(i * sizeof(podatki), *(uporabnik + i));
+		*/
 	}
 	stUporabnika = EEPROM.read(6*sizeof(podatki));
 	pointerPodatki = uporabnik + stUporabnika;
@@ -157,12 +157,6 @@ int main(void) {
 				zapisiNaEEPROM(stUporabnika * sizeof(podatki), *pointerPodatki);
 				prikazSpremenjen("Grafika 1 ");
 				break;
-			case 4:
-				(*pointerPodatki).prikazPointer = prikazRazdalje;
-				zapisiNaEEPROM(stUporabnika * sizeof(podatki), *pointerPodatki);
-				prikazSpremenjen(" ");
-				break;
-
 			}
 		} else if(meniPointer == nastavitve) {
 			switch(zacetek) {
@@ -186,9 +180,6 @@ int main(void) {
 				spremeniPodatek("zvok", " ",&(*pointerPodatki).zvok, 1, 0,stUporabnika,pointerPodatki);
 				break;
 			case 5:
-				spremeniPodatek("lucke", " ",&(*pointerPodatki).lucke, 1, 0,stUporabnika,pointerPodatki);
-				break;
-			case 6:
 				*pointerPodatki = privzeto;
 				zapisiNaEEPROM((unsigned int)stUporabnika * sizeof(podatki), *pointerPodatki);
 				prikazPonastaviNastavitve(stUporabnika + 1);
@@ -205,6 +196,7 @@ int main(void) {
 				pointerPodatki = uporabnik + stUporabnika;
 				EEPROM.write(6*sizeof(podatki),stUporabnika); //vrednost stUporabnika se nahaja za podatki
 				meniPointer = glavniMeni;
+				velikostPointer = &velikostGM;
 				uporabnikSpremenjen(stUporabnika + 1);
 				break;
 			}
